@@ -15,9 +15,9 @@ var config = {
     // Grabs user input
     var trainName = $("#train-name-input").val().trim();
     var trainDest = $("#destination-input").val().trim();
-    var trainStart = moment($("#start-input").val().trim(), "MM/DD/YYYY").format("X");
+    var trainStart =$("#start-input").val().trim();
     var trainFrequency = $("#frequency-input").val().trim();
-  
+   
     // Creates local "temporary" object for holding train info
     var newTrain = {
       name: trainName,
@@ -35,14 +35,14 @@ var config = {
     console.log(newTrain.start);
     console.log(newTrain.frequency);
   
-    alert("Train successfully added");
+    //alert("Train successfully added");
   
     // Clears all of the text-boxes
     $("#train-name-input").val("");
     $("#destination-input").val("");
     $("#start-input").val("");
     $("#frequency-input").val("");
-  });
+ // });
   
   // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
   database.ref().on("child_added", function(childSnapshot) {
@@ -54,21 +54,37 @@ var config = {
     var trainStart = childSnapshot.val().start;
     var trainFrequency = childSnapshot.val().frequency;
   
+    //setting up variables to find the next arrival train, mins away and use moment to convert start time and time diff.
+    let startTimeCoverted = moment(trainStart, "hh:mm").subtract(1, "years");
+    let timeDiff = moment().diff( moment(startTimeCoverted),"minutes")
+    let timeRemaining = timeDiff % trainFrequency;
+    let minUntilTrain = trainFrequency - timeRemaining;
+
+    //this will find the next train 
+
+    let nextTrain = moment().add(minUntilTrain, "minutes")
+
+
+
+
     // Prettify 
-    var trainStartPretty = moment.unix(trainStart).format("HH:mm");
+    //var trainStartPretty = moment.unix(trainStart).format("HH:mm");
   
     
     // Create the new row
+
+   
     var newRow = $("<tr>").append(
       $("<td>").text(trainName),
       $("<td>").text(trainDest),
-      $("<td>").text(trainStartPretty),
+      //$("<td>").text(startTimeCoverted),
       $("<td>").text(trainFrequency),
-      $("<td>").text(),
-      $("<td>").text()
+      $("<td>").text(moment(nextTrain).format("hh:mm")),
+      $("<td>").text(timeRemaining)
     );
   
     // Append the new row to the table
-    $("#employee-table > tbody").append(newRow);
+    $("#train-table").append(newRow);
   });
   
+})
