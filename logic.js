@@ -24,16 +24,18 @@ var config = {
       destination: trainDest,
       start: trainStart,
       frequency: trainFrequency,
+     // nextTrainFormatted:
+     // minUntilTrain: minUntilTrain,
     };
   
     // Uploads train data to the database
     database.ref().push(newTrain);
   
     // Logs everything to console
-    console.log(newTrain.name);
-    console.log(newTrain.destination);
-    console.log(newTrain.start);
-    console.log(newTrain.frequency);
+    // console.log(newTrain.name);
+    // console.log(newTrain.destination);
+    // console.log(newTrain.start);
+    // console.log(newTrain.frequency);
   
     //alert("Train successfully added");
   
@@ -46,7 +48,7 @@ var config = {
   
   // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
   database.ref().on("child_added", function(childSnapshot) {
-    console.log(childSnapshot.val());
+    //console.log(childSnapshot.val());
   
     // Store everything into a variable.
     var trainName = childSnapshot.val().name;
@@ -65,7 +67,8 @@ var config = {
     let nextTrain = moment().add(minUntilTrain, "minutes")
 
 
-
+    console.log(minUntilTrain)
+    console.log(nextTrain)
 
     // Prettify 
     //var trainStartPretty = moment.unix(trainStart).format("HH:mm");
@@ -78,9 +81,9 @@ var config = {
       $("<td>").text(trainName),
       $("<td>").text(trainDest),
       //$("<td>").text(startTimeCoverted),
-      $("<td>").text(trainFrequency),
+      $("<td>").text(trainFrequency, "min"),
       $("<td>").text(moment(nextTrain).format("hh:mm")),
-      $("<td>").text(timeRemaining)
+      $("<td>").text(timeRemaining, "min" )
     );
   
     // Append the new row to the table
